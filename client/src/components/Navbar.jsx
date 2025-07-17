@@ -37,7 +37,8 @@ const NavLogo = styled.div`
   color: inherit;
   `;
 const Logo = styled.img`
-  height: 120px;
+    width: 170px;
+  height: auto;
 `;
 const NavItems = styled.div`
 width: 100%;

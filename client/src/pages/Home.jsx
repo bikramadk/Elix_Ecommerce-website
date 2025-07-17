@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import HeaderImage from "../utils/Images/Header.jpg";
 import ProductCategoryCard from "../components/cards/ProductCategoryCard";
+import ProductCard from "../components/cards/ProductCard";
 import { category } from "../utils/data";
 
 const Container = styled.div`
@@ -72,6 +73,12 @@ export const Home = () => {
       </Section>
       <Section>
       <Title center>Our Bestseller</Title>
+      <CardWrapper>
+       <ProductCard></ProductCard>
+       <ProductCard></ProductCard>
+       <ProductCard></ProductCard>
+       <ProductCard></ProductCard>
+        </CardWrapper>
       </Section>
     </Container>
     

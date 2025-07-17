@@ -5,7 +5,10 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Navbar from './components/Navbar';
 import Authentication from './pages/Authentication'; 
 import Home from "./pages/Home";// Adjust the path as needed
+import ShopListing from './pages/ShopListing';
 import SignIn from './components/SignIn'; // Adjust the path as needed
+import Favourite from './pages/Favourite';
+import Cart from "./pages/Cart";
 
 const Container = styled.div`
 width: 100%;
@@ -28,7 +31,9 @@ function App() {
           <Navbar openAuth={openAuth} setOpenAuth={setOpenAuth} />
           <Routes>
           <Route path="/" exact element={<Home />} />
-          
+          <Route path="/shop" exact element={<ShopListing />} />
+          <Route path="/favorite" exact element={<Favourite />} />
+          <Route path="/cart" exact element={<Cart />} />
 
           </Routes>
           {openAuth && (
