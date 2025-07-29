@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import ProductCard from "../components/cards/ProductCard";
+import { getFavourite } from "../api";
+import { CircularProgress } from "@mui/material";
 
 const Container = styled.div`
   padding: 20px 30px;
@@ -24,8 +26,6 @@ const Section = styled.div`
   gap: 28px;
 `;
 
-
-
 const Title = styled.div`
   font-size: 28px;
   font-weight: 500;
@@ -44,20 +44,48 @@ const CardWrapper = styled.div`
   }
 `;
 
-export const Favourite = () => {
+const Favourite = () => {
+  const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [reload, setReload] = useState(false);
+
+  const getProducts = async () => {
+    setLoading(true);
+    const token = localStorage.getItem("krist-app-token");
+    await getFavourite(token).then((res) => {
+      setProducts(res.data);
+      setLoading(false);
+      setReload(!reload);
+    });
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
   return (
     <Container>
-  <Section>
-    <Title>Your favourites</Title>
-    <CardWrapper>
-      <ProductCard />
-      <ProductCard />
-      <ProductCard />
-      <ProductCard />
-    </CardWrapper>
-  </Section>
-</Container>
-  )
-}
+      <Section>
+        <Title>Your favourites</Title>
+        <CardWrapper>
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            <>
+              {products.length === 0 ? (
+                <>No Products</>
+              ) : (
+                <CardWrapper>
+                  {products.map((product) => (
+                    <ProductCard product={product} />
+                  ))}
+                </CardWrapper>
+              )}
+            </>
+          )}
+        </CardWrapper>
+      </Section>
+    </Container>
+  );
+};
 
 export default Favourite;

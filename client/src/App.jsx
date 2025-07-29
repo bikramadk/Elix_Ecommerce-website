@@ -9,6 +9,9 @@ import ShopListing from './pages/ShopListing';
 import SignIn from './components/SignIn'; // Adjust the path as needed
 import Favourite from './pages/Favourite';
 import Cart from "./pages/Cart";
+import ProductDetails from './pages/ProductDetails';
+import ToastMessage from "./components/ToastMessage";
+import { useSelector } from "react-redux";
 
 const Container = styled.div`
 width: 100%;
@@ -20,6 +23,9 @@ color: ${({ theme }) => theme.text_primary};
 `;
 
 function App() {
+  const { currentUser } = useSelector((state) => state.user);
+  const { open, message, severity } = useSelector((state) => state.user);
+
   const [theme, setTheme] = useState(lightTheme);
   const [openAuth, setOpenAuth] = useState(false);
 
@@ -34,10 +40,14 @@ function App() {
           <Route path="/shop" exact element={<ShopListing />} />
           <Route path="/favorite" exact element={<Favourite />} />
           <Route path="/cart" exact element={<Cart />} />
+          <Route path="/shop/:id" exact element={<ProductDetails />} />
 
           </Routes>
           {openAuth && (
             <Authentication openAuth={openAuth} setOpenAuth={setOpenAuth} />
+          )}
+           {open && (
+            <ToastMessage open={open} message={message} severity={severity} />
           )}
           </Container>
         </BrowserRouter>

@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ProductImg from "../../utils/Images/img1.jpg"
 import { CircularProgress, Rating } from "@mui/material";
 import styled from "styled-components";
 import {
-    AddShoppingCartOutlined,
-  
-    FavoriteRounded,
-  } from "@mui/icons-material";
+  AddShoppingCartOutlined,
+  FavoriteBorder,
+  FavoriteRounded,
+} from "@mui/icons-material";
+import {
+  addToCart,
+  addToFavourite,
+  deleteFromFavourite,
+  getFavourite,
+} from "../../api";
+import { useDispatch } from "react-redux";
+import { openSnackbar } from "../../redux/reducers/snackbarSlice";
+
 
 const Card = styled.div`
   width: 250px;
@@ -47,7 +57,16 @@ const Top = styled.div`
   position: relative;
   border-radius: 6px;
   transition: all 0.3s ease-out;
+  &:hover {
+    background-color: ${({ theme }) => theme.primary};
+  }
 
+  &:hover ${Image} {
+    opacity: 0.9;
+  }
+  &:hover ${Menu} {
+    display: flex;
+  }
 `;
 const MenuItem = styled.div`
   border-radius: 50%;
@@ -76,7 +95,8 @@ const Rate = styled.div`
 `;
 
 const Details = styled.div`
-
+import { useDispatch } from "react-redux";
+import { openSnackbar } from "../../redux/reducers/snackbarSlice";
   display: flex;
   gap: 6px;
   flex-direction: column;
@@ -116,31 +136,129 @@ const Percent = styled.div`
   color: green;
 `;
 
-const ProductCard = () => {
+const ProductCard = ({ product }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [favorite, setFavorite] = useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
+
+  const addFavorite = async () => {
+    setFavoriteLoading(true);
+    const token = localStorage.getItem("Elix-app-token");
+    await addToFavourite(token, { productID: product?._id })
+      .then((res) => {
+        setFavorite(true);
+        setFavoriteLoading(false);
+      })
+      .catch((err) => {
+        setFavoriteLoading(false);
+        dispatch(
+          openSnackbar({
+            message: err.message,
+            severity: "error",
+          })
+        );
+      });
+  };
+  const removeFavorite = async () => {
+    setFavoriteLoading(true);
+    const token = localStorage.getItem("Elix-app-token");
+    await deleteFromFavourite(token, { productID: product?._id })
+      .then((res) => {
+        setFavorite(false);
+        setFavoriteLoading(false);
+      })
+      .catch((err) => {
+        setFavoriteLoading(false);
+        dispatch(
+          openSnackbar({
+            message: err.message,
+            severity: "error",
+          })
+        );
+      });
+  };
+  const addCart = async () => {
+    const token = localStorage.getItem("Elix-app-token");
+    await addToCart(token, { productId: product?._id, quantity: 1 })
+      .then((res) => {
+        navigate("/cart");
+      })
+      .catch((err) => {
+        dispatch(
+          openSnackbar({
+            message: err.message,
+            severity: "error",
+          })
+        );
+      });
+  };
+  const checkFavourite = async () => {
+    setFavoriteLoading(true);
+    const token = localStorage.getItem("Elix-app-token");
+    await getFavourite(token, { productId: product?._id })
+      .then((res) => {
+        const isFavorite = res.data?.some(
+          (favorite) => favorite._id === product?._id
+        );
+        setFavorite(isFavorite);
+        setFavoriteLoading(false);
+      })
+      .catch((err) => {
+        setFavoriteLoading(false);
+        dispatch(
+          openSnackbar({
+            message: err.message,
+            severity: "error",
+          })
+        );
+      });
+  };
+
+  useEffect(() => {
+    checkFavourite();
+  }, []);
   return (
     <Card>
-        <Top>
-            <Image src="https://pin.it/7C24H9vTn"/>
-            <Menu>
-            <FavoriteRounded sx={{ fontSize: "20px", color: "red" }} />
-            <MenuItem>
+      <Top>
+        <Image src={product?.img} />
+        <Menu>
+          <MenuItem
+            onClick={() => (favorite ? removeFavorite() : addFavorite())}
+          >
+            {favoriteLoading ? (
+              <CircularProgress sx={{ fontSize: "20px" }} />
+            ) : (
+              <>
+                {favorite ? (
+                  <FavoriteRounded sx={{ fontSize: "20px", color: "red" }} />
+                ) : (
+                  <FavoriteBorder sx={{ fontSize: "20px" }} />
+                )}
+              </>
+            )}
+          </MenuItem>{" "}
+          <MenuItem onClick={() => addCart(product?.id)}>
             <AddShoppingCartOutlined
               sx={{ color: "inherit", fontSize: "20px" }}
-              
             />
-            </MenuItem>
-            </Menu>
-            <Rate>
-            <Rating value={3.5} sx={{ fontSize: "14px" }} />
-            </Rate>
-        </Top>
-        <Details>
-            <Title>Title</Title>
-            <Desc>Description</Desc>
-            <Price>$1200<Span>1500</Span><Percent>20%off</Percent></Price>
-        </Details>
+          </MenuItem>
+        </Menu>
+        <Rate>
+          <Rating value={3.5} sx={{ fontSize: "14px" }} />
+        </Rate>
+      </Top>
+      <Details onClick={() => navigate(`/shop/${product._id}`)}>
+        <Title>{product?.title}</Title>
+        <Desc>{product?.name}</Desc>
+        <Price>
+          ${product?.price?.org} <Span>${product?.price?.mrp}</Span>
+          <Percent>${product?.price?.off}% Off</Percent>
+        </Price>
+      </Details>
     </Card>
-  )
-}
+  );
+};
+
 
 export default ProductCard

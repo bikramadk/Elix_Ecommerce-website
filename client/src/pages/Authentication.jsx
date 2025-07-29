@@ -1,4 +1,4 @@
-import { Modal } from '@mui/material'
+import { Modal } from '@mui/material';
 import React, { useState } from "react";
 import styled from "styled-components";
 import AuthImage from "../utils/Images/AuthImage.png";
@@ -7,9 +7,7 @@ import { Close } from "@mui/icons-material";
 import SignIn from "../components/SignIn";
 import SignUp from "../components/SignUp";
 
-
-
- const Container = styled.div`
+const Container = styled.div`
   flex: 1;
   height: 100%;
   display: flex;
@@ -17,7 +15,7 @@ import SignUp from "../components/SignUp";
 `;
 
 const Left = styled.div`
- flex: 1;
+  flex: 1;
   position: relative;
   @media screen and (max-width: 768px) {
     display: none;
@@ -32,6 +30,7 @@ const Logo = styled.img`
   height: 80px;
   width: auto;
 `;
+
 const Image = styled.img`
   position: absolute;
   height: 100%;
@@ -40,8 +39,9 @@ const Image = styled.img`
   top: 0;
   left: 0;
 `;
+
 const Right = styled.div`
- position: relative;
+  position: relative;
   flex: 0.9;
   display: flex;
   flex-direction: column;
@@ -51,7 +51,9 @@ const Right = styled.div`
   justify-content: center;
   @media screen and (max-width: 768px) {
     flex: 1;
+  }
 `;
+
 const CloseButton = styled.div`
   position: absolute;
   top: 20px;
@@ -64,10 +66,12 @@ const CloseButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
   &:hover {
     background: ${({ theme }) => theme.primary + 20};
   }
 `;
+
 const Text = styled.p`
   display: flex;
   gap: 12px;
@@ -79,6 +83,7 @@ const Text = styled.p`
     font-size: 14px;
   }
 `;
+
 const TextButton = styled.div`
   color: ${({ theme }) => theme.primary};
   cursor: pointer;
@@ -86,25 +91,29 @@ const TextButton = styled.div`
   font-weight: 600;
 `;
 
-const Authentication = ({openAuth , setOpenAuth}) => {
+const Authentication = ({ openAuth, setOpenAuth }) => {
   const [login, setLogin] = useState(true);
+
+  const handleClose = () => {
+    setOpenAuth(false);
+  };
+
   return (
-    <Modal open={openAuth} onClose={() => setOpenAuth(false)}>
-     <Container>
+    <Modal open={openAuth} onClose={handleClose}>
+      <Container>
         <Left>
           <Logo src={LogoImage} alt="Logo" />
           <Image src={AuthImage} alt="Authentication" />
         </Left>
         <Right>
-          <CloseButton >
-          <Close onClick={() => setOpenAuth(false)} />
+          <CloseButton onClick={handleClose}>
+            <Close />
           </CloseButton>
           {login ? (
             <>
               <SignIn setOpenAuth={setOpenAuth} />
               <Text>
-                {" "}
-                Don't have an account ?{" "}
+                Don't have an account?{" "}
                 <TextButton onClick={() => setLogin(false)}>Sign Up</TextButton>
               </Text>
             </>
@@ -112,7 +121,7 @@ const Authentication = ({openAuth , setOpenAuth}) => {
             <>
               <SignUp setOpenAuth={setOpenAuth} />
               <Text>
-                Already have an account ?{" "}
+                Already have an account?{" "}
                 <TextButton onClick={() => setLogin(true)}>Sign In</TextButton>
               </Text>
             </>
@@ -120,7 +129,7 @@ const Authentication = ({openAuth , setOpenAuth}) => {
         </Right>
       </Container>
     </Modal>
-  )
-}
+  );
+};
 
-export default Authentication
+export default Authentication;
